@@ -1,33 +1,47 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import { useForm } from 'react-hook-form';
-import { fetchAuth } from '../../redux/slices/auth';
+import { fetchAuth, isAuthSelector } from '../../redux/slices/auth';
 
 import styles from "./Login.module.scss";
 
 export const Login = () => {
+  const isAuth = useSelector(isAuthSelector);
   const dispatch = useDispatch();
 
   const { 
     register, 
     handleSubmit,
     setError, 
-    formState : { errors, isValid},
+    formState : { errors, isValid },
   } = useForm({
     defaultValues: {
-      email: '',
-      password: '',
+      email: 'test@test.com',
+      password: '12345',
     },
     mode: 'onChange', //all
   });
 
-  const onSubmit = (values) => {
-    dispatch(fetchAuth(values));
+  const onSubmit = async (values) => {
+    const data = await dispatch(fetchAuth(values));
+    if (!data.payloaded) {
+      return alert('Failed authorization');
+    }
+    if ('token' in data.payload) {
+      window.localStorage.setItem('token', data.payload.token);
+    } else {
+      alert('Failed authorization');
+    }
+  }
+
+  if (isAuth) {
+    return <Navigate to="/" />;
   }
 
   return (
@@ -48,6 +62,7 @@ export const Login = () => {
         <TextField 
           className={styles.field} 
           label="Password"
+          error= {Boolean(errors.password?.message)}
           helperText= {errors.password?.message}
           type="password"
           {...register( 'password', {required: 'Write your password'})}
