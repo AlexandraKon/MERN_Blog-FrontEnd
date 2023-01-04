@@ -23,20 +23,20 @@ export const Login = () => {
   } = useForm({
     defaultValues: {
       email: 'test@test.com',
-      password: '12345',
+      password: '123456',
     },
     mode: 'onChange', //all
   });
 
   const onSubmit = async (values) => {
     const data = await dispatch(fetchAuth(values));
+    console.log(data);
     if (!data.payloaded) {
+      console.log("hhh" + data);
       return alert('Failed authorization');
     }
     if ('token' in data.payload) {
       window.localStorage.setItem('token', data.payload.token);
-    } else {
-      alert('Failed authorization');
     }
   }
 

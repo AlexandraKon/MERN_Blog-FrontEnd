@@ -1,5 +1,5 @@
+import React from "react";
 import Container from "@mui/material/Container";
-import { useEffect } from "react";
 import { Routes, Route} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -11,7 +11,7 @@ function App() {
   const dispatch = useDispatch();
   const isAuth = useSelector(isAuthSelector);
 
-  useEffect(() => {
+  React.useEffect(() => {
     dispatch(fetchAuthMe());
   }, []);
 
